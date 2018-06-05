@@ -7,9 +7,10 @@ import MyConfiguration as myCfg
 sensor_data = []
 
 def MovingAverage():
-    print(sensor_data)
+    # print(sensor_data)
     result = []
     sliding_window = int(myCfg.window_length / 4)
+    # sliding_window = 10
     sum = 0.0
 
     for i in range(len(sensor_data)):

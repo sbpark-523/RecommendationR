@@ -47,15 +47,18 @@ D_w3 = tf.Variable(tf.random_normal([3, 1, 4], stddev=0.01), name='Dw3')
 # input shape X_reshape --> (batch size, 2048, 1)
 def encoder(X):
     EC1 = tf.nn.conv1d(value=X, filters=E_w1, stride=1, padding='SAME', name='E/conv1')
-    EC1 = tf.nn.leaky_relu(EC1, 0.01)
+    #EC1 = tf.nn.leaky_relu(EC1, 0.01)
+    EC1 = tf.nn.tanh(EC1)
     print(EC1)
 
     EC2 = tf.nn.conv1d(value=EC1, filters=E_w2, stride=1, padding='SAME', name='E/conv2')
-    EC2 = tf.nn.leaky_relu(EC2, 0.01)
+    #EC2 = tf.nn.leaky_relu(EC2, 0.01)
+    EC2 = tf.nn.tanh(EC2)
     print(EC2)
 
     EC3 = tf.nn.conv1d(value=EC2, filters=E_w3, stride=1, padding='SAME', name='E/conv3')
-    EC3 = tf.nn.leaky_relu(EC3, 0.01)
+    #EC3 = tf.nn.leaky_relu(EC3, 0.01)
+    EC3 = tf.nn.tanh(EC3)
     print(EC3)
 
     output = EC3
@@ -67,11 +70,13 @@ def decoder(mid):
     mid_size = tf.shape(mid)[1]
     print(mid_size*2)
     DC1 = tf.contrib.nn.conv1d_transpose(value=mid, filter=D_w1, output_shape=[batch_size, mid_size, 8], stride=1, padding='SAME', name='D/conv1', data_format='NWC')
-    DC1 = tf.nn.leaky_relu(DC1, 0.01)
+    # DC1 = tf.nn.leaky_relu(DC1, 0.01)
+    DC1 = tf.nn.tanh(DC1)
     print(DC1)
 
     DC2 = tf.contrib.nn.conv1d_transpose(value=DC1, filter=D_w2, output_shape=[batch_size, mid_size, 4], stride=1, padding='SAME', name='D/conv2', data_format='NWC')
-    DC2 = tf.nn.leaky_relu(DC2, 0.01)
+    # DC2 = tf.nn.leaky_relu(DC2, 0.01)
+    DC2 = tf.nn.tanh(DC2)
     print(DC2)
 
     DC_final = tf.contrib.nn.conv1d_transpose(value=DC2, filter=D_w3, output_shape=[batch_size, mid_size, 1], stride=1, padding='SAME', name='D/conv_final')
@@ -187,7 +192,7 @@ for step in range(training_epoch):
             print('Distance: {}, learning rate: {}'.format(now_dist, learning_rate))
         last_dist = now_dist
 
-        save_path = saver.save(sess, "./model/model_12(lr_01_e1000_adam)/model.ckpt")
+        save_path = saver.save(sess, "./model/model_13(lr_01_e800_adam_tanh)/model.ckpt")
         print("Saved in : {}".format(save_path))
 
     xTrain, yTrain = noiseMask.createTrainingData()

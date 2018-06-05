@@ -14,13 +14,14 @@ class NoiseMask:
         self.data_stdev = 0.0
         self.isFirst = True
 
+    # 표준편차*표준편차(=분산)의 n% 사용
     def _generateNoise(self, data_dicts, data_stdev):
-        noise_list = [0.2, 0.4, 0.6, 0.8, 1.0]
+        noise_list = [0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 3.0]
         for d in data_dicts:
             series = d['time_series'].copy()
-            noise_idx = random.randint(0, 4)
+            noise_idx = random.randint(0, len(noise_list)-1)
             for i, val in enumerate(series):
-                rand = random.gauss(0.0, data_stdev * noise_list[noise_idx])
+                rand = random.gauss(0.0, data_stdev*data_stdev * noise_list[noise_idx])
                 val += rand
                 series[i] = val
             d['time_series'] = series
